@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Patient Verification</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .card {
+            background: #222;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h2 {
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Patient Verification</h2>
+        <p><strong>Name:</strong> {{ name }}</p>
+        <p><strong>Age:</strong> {{ age }}</p>
+        <p><strong>Mobile:</strong> {{ mobile }}</p>
+        <p><strong>Result:</strong> {{ result }}</p>
+        <p><strong>Confidence:</strong> {{ confidence }}%</p>
+        <p><strong>Timestamp:</strong> {{ timestamp }}</p>
+    </div>
+</body>
+</html>

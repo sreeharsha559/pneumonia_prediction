@@ -1,0 +1,9 @@
+Flask
+gunicorn
+numpy
+tensorflow
+pillow
+opencv-python
+firebase-admin
+qrcode
+reportlab

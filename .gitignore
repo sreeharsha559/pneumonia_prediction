@@ -1,0 +1,24 @@
+# Virtual Environment
+venv/
+__pycache__/
+*.pyc
+
+# Database
+*.db
+
+# Large files
+*.zip
+*.h5
+
+# Dataset
+chest-xray-pneumonia/
+
+# Generated static files
+static/*.pdf
+static/*.png
+
+# Firebase secret
+firebase_key.json
+
+# Environment
+.env

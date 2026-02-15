@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pneumonia Detection AI - Medical Dashboard</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg,#667eea,#764ba2,#f093fb,#667eea);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: white;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position:0% 50%; }
+            50% { background-position:100% 50%; }
+            100% { background-position:0% 50%; }
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10,10,20,0.85);
+            z-index: -1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(102,126,234,0.6);
+        }
+
+        .header p {
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .glass-card {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 40px rgba(102,126,234,0.2);
+            margin-bottom: 32px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .form-field {
+            grid-column: span 4;
+        }
+
+        .form-field.full-width {
+            grid-column: span 12;
+        }
+
+        .input-wrapper {
+            position: relative;
+            height: 56px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            height: 56px;
+            padding: 0 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102,126,234,0.5);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .file-upload-section {
+            grid-column: span 12;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            height: 120px;
+            border-radius: 16px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: #667eea;
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 20px rgba(102,126,234,0.4);
+        }
+
+        .file-upload-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-upload-content {
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .file-upload-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            opacity: 0.8;
+        }
+
+        .file-upload-text {
+            color: rgba(255,255,255,0.9);
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .file-upload-subtext {
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+        }
+
+        .button-section {
+            grid-column: span 12;
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+        }
+
+        .btn {
+            min-width: 200px;
+            height: 56px;
+            padding: 0 32px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg,#667eea,#764ba2);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(102,126,234,0.6);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .glass-card {
+                padding: 24px;
+            }
+            
+            .form-grid {
+                gap: 16px;
+            }
+            
+            .form-field {
+                grid-column: span 12;
+            }
+            
+            .file-upload-wrapper {
+                height: 100px;
+            }
+        }
+
+        .error-box {
+            background: rgba(231,76,60,0.2);
+            border: 1px solid rgba(231,76,60,0.5);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-card {
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .prediction-normal {
+            background: rgba(46,204,113,0.2);
+            border: 1px solid rgba(46,204,113,0.6);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .prediction-pneumonia {
+            background: rgba(231,76,60,0.2);
+            border: 1px solid rgba(231,76,60,0.6);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .confidence-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg,#667eea,#764ba2);
+            border-radius: 4px;
+        }
+
+        .hash-box {
+            margin-top: 15px;
+            padding: 10px;
+            font-size: 12px;
+            font-family: monospace;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            word-break: break-all;
+        }
+
+        .images {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .images img {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            border-radius: 10px;
+            background: linear-gradient(135deg,#00d4ff,#00a8cc);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .disclaimer {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(255,193,7,0.1);
+            border: 1px solid rgba(255,193,7,0.4);
+            border-radius: 12px;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+<div class="overlay"></div>
+
+<div class="header">
+    <h1>🏥 AI Medical Dashboard</h1>
+    <p>Advanced Pneumonia Detection System</p>
+</div>
+
+<div class="container">
+
+    <div class="glass-card">
+        <form action="/predict" method="post" enctype="multipart/form-data">
+            <div class="form-grid">
+                <div class="form-field">
+                    <div class="input-wrapper">
+                        <input type="text" name="patient_name" placeholder="Patient Name" required>
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <div class="input-wrapper">
+                        <input type="number" name="age" placeholder="Age" required>
+                    </div>
+                </div>
+                
+                <div class="form-field">
+                    <div class="input-wrapper">
+                        <input type="text" name="mobile" placeholder="Mobile Number" required>
+                    </div>
+                </div>
+
+                <div class="file-upload-section">
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="file" class="file-upload-input" accept=".jpg,.jpeg,.png" required>
+                        <div class="file-upload-content">
+                            <div class="file-upload-icon">📁</div>
+                            <div class="file-upload-text">Click to upload or drag and drop</div>
+                            <div class="file-upload-subtext">Chest X-ray (JPG, PNG) • Max 10MB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-section">
+                    <button type="submit" class="btn">🚀 Run AI Analysis</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if error %}
+    <div class="error-box">
+        ⚠ {{ error }}
+    </div>
+    {% endif %}
+
+    {% if prediction %}
+    <div class="result-card">
+
+        <div class="{% if 'Pneumonia' in prediction %}prediction-pneumonia{% else %}prediction-normal{% endif %}">
+            <h2>{{ prediction }}</h2>
+        </div>
+
+        {% if confidence %}
+        <p style="margin-top:15px;">Confidence: {{ confidence }}%</p>
+        <div class="confidence-bar">
+            <div class="confidence-fill" style="width: {{ confidence }}%"></div>
+        </div>
+        {% endif %}
+
+        {% if record_hash %}
+        <div class="hash-box">
+            🔐 Analysis Hash: {{ record_hash }}
+        </div>
+        {% endif %}
+
+        <div class="images">
+            <div>
+                <h3>Original X-ray</h3>
+                <img src="{{ url_for('static', filename=original_image) }}">
+            </div>
+            <div>
+                <h3>Grad-CAM Heatmap</h3>
+                <img src="{{ url_for('static', filename=heatmap_image) }}">
+            </div>
+        </div>
+
+        {% if report_file %}
+        <div style="text-align:center;">
+            <a href="{{ url_for('static', filename=report_file) }}" download class="download-btn">
+                📄 Download Report
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+    {% endif %}
+
+    <div class="disclaimer">
+        ⚠ This AI system is for educational and research purposes only.
+        It does NOT replace professional medical diagnosis.
+    </div>
+
+</div>
+
+</body>
+</html>
