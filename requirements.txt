@@ -8,3 +8,4 @@ Pillow
 reportlab
 qrcode
 firebase-admin
+opencv-python-headless
